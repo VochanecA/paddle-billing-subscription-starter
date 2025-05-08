@@ -399,4 +399,6 @@ const Header: React.FC<Props> = React.memo(({ user }) => {
   );
 });
 
+Header.displayName = 'Header';
+
 export default Header;
