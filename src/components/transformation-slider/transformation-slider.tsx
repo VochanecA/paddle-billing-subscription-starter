@@ -61,15 +61,31 @@ export function TransformationSlider({
   );
 
   useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove);
+    const handleMouseMoveWrapper = (e: MouseEvent) => {
+      try {
+        handleMouseMove(e);
+      } catch (error) {
+        console.error('Error in handleMouseMove:', error);
+      }
+    };
+
+    const handleTouchMoveWrapper = (e: TouchEvent) => {
+      try {
+        handleTouchMove(e);
+      } catch (error) {
+        console.error('Error in handleTouchMove:', error);
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMoveWrapper);
     window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('touchmove', handleTouchMove);
+    window.addEventListener('touchmove', handleTouchMoveWrapper);
     window.addEventListener('touchend', handleMouseUp);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousemove', handleMouseMoveWrapper);
       window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchmove', handleTouchMoveWrapper);
       window.removeEventListener('touchend', handleMouseUp);
     };
   }, [isDragging, handleMouseMove, handleTouchMove]);
