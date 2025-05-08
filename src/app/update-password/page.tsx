@@ -1,6 +1,16 @@
-// src/app/update-password/page.tsx
+'use client';
+
+import { Suspense } from 'react';
 import { UpdatePasswordForm } from '@/components/authentication/update-password-form';
 
+function Loading() {
+  return <div>Loading...</div>;
+}
+
 export default function UpdatePasswordPage() {
-  return <UpdatePasswordForm />;
+  return (
+    <Suspense fallback={<Loading />}>
+      <UpdatePasswordForm />
+    </Suspense>
+  );
 }
