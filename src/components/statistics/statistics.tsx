@@ -73,7 +73,7 @@ export function LiveUsageStatistics() {
     }, 50);
 
     return () => clearInterval(interval);
-  }, [chartControls, activityData]);
+  }, [chartControls, activityData, targetStats]);
 
   return (
     <section className="mx-auto max-w-7xl px-6 sm:px-8 py-20 md:py-28 bg-background">
