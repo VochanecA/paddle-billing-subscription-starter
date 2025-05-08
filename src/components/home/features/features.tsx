@@ -35,7 +35,7 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section className="mx-auto max-w-7xl px-6 sm:px-8 py-20 md:py-28 bg-background">
+    <section id="features" className="mx-auto max-w-7xl px-6 sm:px-8 py-20 md:py-28 bg-background">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-5xl font-bold tracking-tight">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400">
