@@ -19,7 +19,7 @@ export function TestimonialsSlider() {
       name: 'David Chen',
       title: 'Product Lead, InnovateX',
       content:
-        "I've tried numerous solutions, but this is the first one that truly understands what teams need. The customer support is exceptional, and the platform is constantly improving.",
+        'I have tried numerous solutions, but this is the first one that truly understands what teams need. The customer support is exceptional, and the platform is constantly improving.',
       avatar: '/avatars/david.jpg',
       rating: 5,
     },
@@ -27,7 +27,7 @@ export function TestimonialsSlider() {
       name: 'Michelle Rodriguez',
       title: 'UX Designer, CreativeWorks',
       content:
-        "As a designer, I need tools that don't get in my way. This platform gives me the freedom to create while handling all the technical complexities behind the scenes.",
+        'As a designer, I need tools that dont get in my way. This platform gives me the freedom to create while handling all the technical complexities behind the scenes.',
       avatar: '/avatars/michelle.jpg',
       rating: 5,
     },
@@ -43,7 +43,7 @@ export function TestimonialsSlider() {
       name: 'Emily Parker',
       title: 'Content Manager, MediaPro',
       content:
-        "Our team's workflow has never been smoother. The automation features alone have saved us countless hours of manual work every week.",
+        'Our team  workflow has never been smoother. The automation features alone have saved us countless hours of manual work every week.',
       avatar: '/avatars/emily.jpg',
       rating: 5,
     },
@@ -51,7 +51,7 @@ export function TestimonialsSlider() {
       name: 'Robert Kim',
       title: 'Project Manager, BuildRight',
       content:
-        "The analytics dashboard provides invaluable insights that help us make data-driven decisions. It's like having a business intelligence tool built right in.",
+        'The analytics dashboard provides invaluable insights that help us make data-driven decisions. It is like having a business intelligence tool built right in.',
       avatar: '/avatars/robert.jpg',
       rating: 5,
     },
@@ -59,7 +59,7 @@ export function TestimonialsSlider() {
       name: 'Jessica Thompson',
       title: 'CEO, StartupVision',
       content:
-        "As we've scaled from 5 to 50 employees, this platform has scaled perfectly with us. It's an essential part of our business infrastructure now.",
+        'As we have scaled from 5 to 50 employees, this platform has scaled perfectly with us. It is an essential part of our business infrastructure now.',
       avatar: '/avatars/jessica.jpg',
       rating: 5,
     },
@@ -106,7 +106,7 @@ export function TestimonialsSlider() {
           </span>
         </h2>
         <p className="mt-6 text-lg md:text-xl max-w-3xl mx-auto leading-relaxed text-gray-700 dark:text-gray-200">
-          Don't just take our word for it — hear from some of our satisfied customers.
+          Dont just take our word for it — hear from some of our satisfied customers.
         </p>
       </div>
 
@@ -134,7 +134,7 @@ export function TestimonialsSlider() {
                   </div>
                 </div>
 
-                <p className="text-gray-600 dark:text-gray-300 flex-grow">"{testimonial.content}"</p>
+                <p className="text-gray-600 dark:text-gray-300 flex-grow">&quot;{testimonial.content}&quot;</p>
 
                 <div className="flex mt-6">
                   {Array.from({ length: 5 }).map((_, i) => (
