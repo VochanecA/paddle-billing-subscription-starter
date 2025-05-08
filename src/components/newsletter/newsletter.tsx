@@ -30,7 +30,7 @@ export function NewsletterSubscription() {
       setStatus('loading');
       setMessage('Subscribing...');
 
-      const response = await axios.put('/api/sendgrid', {
+      const response = await axios.put<{ message: string }>('/api/sendgrid', {
         email: formData.email,
         full_name: formData.full_name,
       });

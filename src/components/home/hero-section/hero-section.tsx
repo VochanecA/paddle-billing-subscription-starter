@@ -1,57 +1,6 @@
-// import { Button } from '@/components/ui/button';
-// import { ArrowRight } from 'lucide-react';
-
-// export function HeroSection() {
-//   return (
-//     <section className="mx-auto max-w-7xl px-6 sm:px-8 relative py-24 md:py-32 bg-background">
-//       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-//         <div className="text-left md:text-left">
-//           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-//             <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500 dark:from-purple-400 dark:to-pink-400">
-//             NextJS 15.2.4 Saas Simple Starter.
-//             </span>
-//             <br className="hidden md:block" />
-//             <span className="md:ml-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent dark:from-primary-400 dark:to-accent-300">Pricing that fits your budget.
-//           </span>
-//           </h1>
-
-//           <p className="mt-8 text-lg md:text-xl max-w-lg leading-relaxed text-gray-700 dark:text-gray-200">
-//           Beautiful, professional designs for all.
-//           </p>
-
-//           <div className="mt-12 flex flex-col sm:flex-row gap-4">
-//             <Button
-//               size="lg"
-//               className="group px-6 py-4 text-lg font-semibold transition-all hover:shadow-lg hover:bg-primary-600 hover:text-white"
-//             >
-//               Get Started Free
-//               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-//             </Button>
-
-//             <Button
-//               variant="outline"
-//               size="lg"
-//               className="px-6 py-4 text-lg font-semibold border-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-//             >
-//               See How It Works
-//             </Button>
-//           </div>
-//         </div>
-
-//         <div className="hidden md:block">
-//           <img
-//             src="/hero.jpeg"
-//             alt="Hero Illustration"
-//             className="w-full h-auto rounded-lg shadow-lg"
-//           />
-//         </div>
-//       </div>
-//     </section>
-//   );
-// }
-
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Play } from 'lucide-react';
+import Image from 'next/image';
 
 export function HeroSection() {
   return (
@@ -127,7 +76,14 @@ export function HeroSection() {
                 <div className="w-3 h-3 rounded-full bg-yellow-400" />
                 <div className="w-3 h-3 rounded-full bg-green-400" />
               </div>
-              <img src="/hero.jpeg" alt="Hero Illustration" className="w-full h-auto" />
+              <Image
+                src="/hero.jpeg"
+                alt="Hero Illustration"
+                width={800}
+                height={600}
+                className="w-full h-auto"
+                priority
+              />
             </div>
 
             {/* Floating badge */}

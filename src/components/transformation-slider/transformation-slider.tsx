@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { MoveLeft, MoveRight } from 'lucide-react';
+import Image from 'next/image';
 
 interface TransformationSliderProps {
   beforeImage: string;
@@ -24,7 +25,7 @@ export function TransformationSlider({
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMove = (clientX: number) => {
+  const handleMove = useCallback((clientX: number) => {
     if (!containerRef.current) return;
 
     const container = containerRef.current;
@@ -33,7 +34,7 @@ export function TransformationSlider({
     const percent = Math.max(0, Math.min((x / rect.width) * 100, 100));
 
     setSliderPosition(percent);
-  };
+  }, []);
 
   const handleMouseDown = () => {
     setIsDragging(true);
@@ -43,15 +44,21 @@ export function TransformationSlider({
     setIsDragging(false);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-    handleMove(e.clientX);
-  };
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging) return;
+      handleMove(e.clientX);
+    },
+    [isDragging, handleMove],
+  );
 
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging || !e.touches[0]) return;
-    handleMove(e.touches[0].clientX);
-  };
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      if (!isDragging || !e.touches[0]) return;
+      handleMove(e.touches[0].clientX);
+    },
+    [isDragging, handleMove],
+  );
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
@@ -65,7 +72,7 @@ export function TransformationSlider({
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleMouseUp);
     };
-  }, [isDragging]);
+  }, [isDragging, handleMouseMove, handleTouchMove]);
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -79,7 +86,13 @@ export function TransformationSlider({
       >
         {/* Before Image */}
         <div className="absolute inset-0 w-full h-full">
-          <img src={beforeImage} alt="Before transformation" className="w-full h-full object-cover object-center" />
+          <Image
+            src={beforeImage}
+            alt="Before transformation"
+            className="w-full h-full object-cover object-center"
+            width={800}
+            height={500}
+          />
           <div className="absolute top-4 left-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-md text-sm">
             {beforeLabel}
           </div>
@@ -87,7 +100,13 @@ export function TransformationSlider({
 
         {/* After Image */}
         <div className="absolute inset-0 h-full overflow-hidden" style={{ width: `${sliderPosition}%` }}>
-          <img src={afterImage} alt="After transformation" className="w-full h-full object-cover object-center" />
+          <Image
+            src={afterImage}
+            alt="After transformation"
+            className="w-full h-full object-cover object-center"
+            width={800}
+            height={500}
+          />
           <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-md text-sm">
             {afterLabel}
           </div>
