@@ -83,7 +83,7 @@ export default function AboutPage() {
                   skill level.
                 </p>
                 <p className="text-lg text-gray-600 dark:text-gray-300">
-                  We're committed to building products that are powerful yet simple, with a focus on collaboration and
+                  We are committed to building products that are powerful yet simple, with a focus on collaboration and
                   community.
                 </p>
               </div>
@@ -124,7 +124,7 @@ export default function AboutPage() {
               Want to join our team?
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-              We're always looking for passionate people to help us build the future of design tools.
+              We are always looking for passionate people to help us build the future of design tools.
             </p>
             <button className="px-8 py-4 text-lg font-semibold rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg transition-all hover:from-purple-600 hover:to-pink-600">
               View Open Positions

@@ -1,7 +1,6 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
 
 export async function updatePassword(formData: FormData) {
   // Get form data
@@ -60,11 +59,11 @@ export async function updatePassword(formData: FormData) {
       success: true,
       message: 'Password updated successfully. You can now log in with your new password.',
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Password update error:', error);
     return {
       error: true,
-      message: error.message || 'An unexpected error occurred. Please try again.',
+      message: error instanceof Error ? error.message : 'An unexpected error occurred. Please try again.',
     };
   }
 }
