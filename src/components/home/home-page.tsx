@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useUserInfo } from '@/hooks/useUserInfo';
@@ -16,6 +15,7 @@ import { ROICalculator } from '@/components/roi-calculator/roi-calculator';
 import { LiveUsageStatistics } from '@/components/statistics/statistics';
 //import { TransformationSlider } from '@/components/transformation-slider/transformation-slider';
 import { Footer } from '@/components/home/footer/footer';
+import { GdprBanner } from '@/components/home/gdpr-banner';
 
 export function HomePage() {
   const supabase = createClient();
@@ -41,6 +41,9 @@ export function HomePage() {
           <NewsletterSubscription />
           <Footer />
         </div>
+
+        {/* GDPR Banner */}
+        <GdprBanner />
       </div>
     </>
   );
