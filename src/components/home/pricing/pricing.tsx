@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CircleCheck } from 'lucide-react';
+import { CircleCheck, AlertTriangle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -11,6 +11,7 @@ import { PricingTier, Tier } from '@/constants/pricing-tier';
 import { BillingFrequency, IBillingFrequency } from '@/constants/billing-frequency';
 import { Environments, initializePaddle, Paddle } from '@paddle/paddle-js';
 import { usePaddlePrices } from '@/hooks/usePaddlePrices';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 // Feature List Component
 function FeaturesList({ tier }: { tier: Tier }) {
@@ -29,27 +30,37 @@ function FeaturesList({ tier }: { tier: Tier }) {
 // Price Amount Component
 function PriceAmount({
   loading,
+  error,
   priceMap,
   priceSuffix,
   tier,
   value,
 }: {
   loading: boolean;
+  error?: string;
   priceMap: Record<string, string>;
   priceSuffix: string;
   tier: Tier;
   value: string;
 }) {
+  // Handle case where price is not available
+  const priceId = tier.priceId[value];
+  const price = priceMap[priceId];
+
   return (
     <div className="mt-6 flex flex-col px-8">
       {loading ? (
         <Skeleton className="h-[96px] w-full bg-gray-200 dark:bg-gray-800" />
+      ) : error ? (
+        <div className="text-[24px] leading-[30px] text-red-500 font-medium">Price unavailable</div>
+      ) : !price ? (
+        <div className="text-[24px] leading-[30px] text-amber-500 font-medium">Price unavailable</div>
       ) : (
         <>
           <div
             className={cn('text-[80px] leading-[96px] tracking-[-1.6px] font-medium', 'text-gray-900 dark:text-white')}
           >
-            {priceMap[tier.priceId[value]]?.replace(/\.00$/, '')}
+            {price.replace(/\.00$/, '')}
           </div>
           <div className={cn('font-medium leading-[12px] text-[12px]', 'text-gray-600 dark:text-gray-400')}>
             {priceSuffix}
@@ -86,10 +97,12 @@ function PriceTitle({ tier }: { tier: Tier }) {
 // Price Cards Component
 function PriceCards({
   loading,
+  error,
   frequency,
   priceMap,
 }: {
   loading: boolean;
+  error?: string;
   frequency: IBillingFrequency;
   priceMap: Record<string, string>;
 }) {
@@ -108,6 +121,7 @@ function PriceCards({
             <PriceTitle tier={tier} />
             <PriceAmount
               loading={loading}
+              error={error}
               tier={tier}
               priceMap={priceMap}
               value={frequency.value}
@@ -119,7 +133,12 @@ function PriceCards({
             <div className="px-8 text-[16px] leading-[24px] text-gray-600 dark:text-gray-400">{tier.description}</div>
           </div>
           <div className="px-8 mt-8">
-            <Button className="w-full" variant={tier.featured ? 'default' : 'secondary'} asChild>
+            <Button 
+              className="w-full" 
+              variant={tier.featured ? 'default' : 'secondary'} 
+              asChild
+              disabled={loading || !!error || !priceMap[tier.priceId[frequency.value]]}
+            >
               <Link href={`/checkout/${tier.priceId[frequency.value]}`}>Get started</Link>
             </Button>
           </div>
@@ -134,26 +153,60 @@ function PriceCards({
 export function Pricing({ country }: { country: string }) {
   const [frequency, setFrequency] = useState<IBillingFrequency>(BillingFrequency[0]);
   const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
+  const [configError, setConfigError] = useState<string | undefined>(undefined);
 
   const { prices, loading } = usePaddlePrices(paddle, country);
+  const error = configError; // Handle only configError since priceError is not returned
 
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN && process.env.NEXT_PUBLIC_PADDLE_ENV) {
-      initializePaddle({
-        token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN,
-        environment: process.env.NEXT_PUBLIC_PADDLE_ENV as Environments,
-      }).then((paddle) => {
-        if (paddle) {
-          setPaddle(paddle);
-        }
-      });
+    const clientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
+    const paddleEnv = process.env.NEXT_PUBLIC_PADDLE_ENV;
+    
+    // Check for missing configuration
+    if (!clientToken) {
+      console.error('Missing NEXT_PUBLIC_PADDLE_CLIENT_TOKEN environment variable');
+      setConfigError('Missing Paddle client token configuration');
+      return;
     }
+    
+    if (!paddleEnv) {
+      console.error('Missing NEXT_PUBLIC_PADDLE_ENV environment variable');
+      setConfigError('Missing Paddle environment configuration');
+      return;
+    }
+
+    // Initialize Paddle
+    initializePaddle({
+      token: clientToken,
+      environment: paddleEnv as Environments,
+    })
+      .then((paddleInstance) => {
+        if (paddleInstance) {
+          setPaddle(paddleInstance);
+          setConfigError(undefined);
+        } else {
+          setConfigError('Failed to initialize Paddle');
+        }
+      })
+      .catch((err) => {
+        console.error('Error initializing Paddle:', err);
+        setConfigError('Failed to initialize Paddle payment system');
+      });
   }, []);
 
   return (
     <div className="mx-auto max-w-7xl relative px-[32px] flex flex-col items-center justify-between">
+      {error && (
+        <Alert variant="destructive" className="mb-6 w-full">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {error}. Please check your Paddle configuration.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       <Toggle frequency={frequency} setFrequency={setFrequency} />
-      <PriceCards frequency={frequency} loading={loading} priceMap={prices} />
+      <PriceCards frequency={frequency} loading={loading} error={error} priceMap={prices} />
     </div>
   );
 }
