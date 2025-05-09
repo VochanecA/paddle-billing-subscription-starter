@@ -154,13 +154,26 @@ export function Pricing({ country }: { country: string }) {
   const [frequency, setFrequency] = useState<IBillingFrequency>(BillingFrequency[0]);
   const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
   const [configError, setConfigError] = useState<string | undefined>(undefined);
+  const [paddleInitialized, setPaddleInitialized] = useState<boolean>(false);
 
-  const { prices, loading } = usePaddlePrices(paddle, country);
-  const error = configError; // Handle only configError since priceError is not returned
+  // Use our updated hook that includes error handling
+  const { prices, loading, error: priceError } = usePaddlePrices(paddle, country);
+  
+  // Combine both error types for display
+  const error = configError || priceError;
 
   useEffect(() => {
+    // Check if paddle is already initialized to prevent duplicate initialization
+    if (paddleInitialized) return;
+
     const clientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
     const paddleEnv = process.env.NEXT_PUBLIC_PADDLE_ENV;
+    
+    // Debug logging
+    console.log('Environment variables check:', { 
+      hasToken: !!clientToken, 
+      hasEnv: !!paddleEnv 
+    });
     
     // Check for missing configuration
     if (!clientToken) {
@@ -176,15 +189,19 @@ export function Pricing({ country }: { country: string }) {
     }
 
     // Initialize Paddle
+    console.log('Initializing Paddle with environment:', paddleEnv);
     initializePaddle({
       token: clientToken,
       environment: paddleEnv as Environments,
     })
       .then((paddleInstance) => {
         if (paddleInstance) {
+          console.log('Paddle initialized successfully');
           setPaddle(paddleInstance);
+          setPaddleInitialized(true);
           setConfigError(undefined);
         } else {
+          console.error('Paddle initialization returned undefined');
           setConfigError('Failed to initialize Paddle');
         }
       })
@@ -192,7 +209,18 @@ export function Pricing({ country }: { country: string }) {
         console.error('Error initializing Paddle:', err);
         setConfigError('Failed to initialize Paddle payment system');
       });
-  }, []);
+  }, [paddleInitialized]);
+
+  // Debug output
+  useEffect(() => {
+    console.log('Pricing state:', {
+      paddleInitialized,
+      hasPaddleInstance: !!paddle,
+      loading,
+      pricesAvailable: Object.keys(prices).length > 0,
+      error
+    });
+  }, [paddle, paddleInitialized, loading, prices, error]);
 
   return (
     <div className="mx-auto max-w-7xl relative px-[32px] flex flex-col items-center justify-between">
