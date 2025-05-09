@@ -19,22 +19,43 @@ function getPriceAmounts(prices: PricePreviewResponse) {
 export function usePaddlePrices(
   paddle: Paddle | undefined,
   country: string,
-): { prices: PaddlePrices; loading: boolean } {
+): { prices: PaddlePrices; loading: boolean; error?: string } {
   const [prices, setPrices] = useState<PaddlePrices>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
+    if (!paddle) {
+      // Don't try to fetch prices if paddle isn't initialized
+      return;
+    }
+
     const paddlePricePreviewRequest: Partial<PricePreviewParams> = {
       items: getLineItems(),
-      ...(country !== 'OTHERS' && { address: { countryCode: country } }),
+      ...(country && country !== 'OTHERS' && { address: { countryCode: country } }),
     };
 
     setLoading(true);
+    setError(undefined);
 
-    paddle?.PricePreview(paddlePricePreviewRequest as PricePreviewParams).then((prices) => {
-      setPrices((prevState) => ({ ...prevState, ...getPriceAmounts(prices) }));
-      setLoading(false);
-    });
+    paddle.PricePreview(paddlePricePreviewRequest as PricePreviewParams)
+      .then((prices) => {
+        try {
+          const formattedPrices = getPriceAmounts(prices);
+          setPrices(formattedPrices);
+          setLoading(false);
+        } catch (err) {
+          console.error('Error processing price data:', err);
+          setError('Failed to process price data');
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching prices from Paddle:', err);
+        setError('Failed to fetch prices');
+        setLoading(false);
+      });
   }, [country, paddle]);
-  return { prices, loading };
+
+  return { prices, loading, error };
 }
