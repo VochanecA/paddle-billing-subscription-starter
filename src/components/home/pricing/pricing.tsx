@@ -1,240 +1,111 @@
-import { useState, useEffect } from 'react';
-import { CircleCheck, AlertTriangle } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Toggle } from '@/components/shared/toggle/toggle';
-import { PricingTier, Tier } from '@/constants/pricing-tier';
-import { BillingFrequency, IBillingFrequency } from '@/constants/billing-frequency';
-import { Environments, initializePaddle, Paddle } from '@paddle/paddle-js';
-import { usePaddlePrices } from '@/hooks/usePaddlePrices';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Paddle, PricePreviewParams, PricePreviewResponse } from '@paddle/paddle-js';
+import { useEffect, useState } from 'react';
+import { PricingTier } from '@/constants/pricing-tier';
 
-// Feature List Component
-function FeaturesList({ tier }: { tier: Tier }) {
-  return (
-    <ul className="p-8 flex flex-col gap-4">
-      {tier.features.map((feature: string) => (
-        <li key={feature} className="flex gap-x-3">
-          <CircleCheck className="h-6 w-6 text-emerald-500 dark:text-emerald-400" />
-          <span className="text-base text-gray-700 dark:text-gray-300">{feature}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
+export type PaddlePrices = Record<string, string>;
 
-// Price Amount Component
-function PriceAmount({
-  loading,
-  error,
-  priceMap,
-  priceSuffix,
-  tier,
-  value,
-}: {
-  loading: boolean;
-  error?: string;
-  priceMap: Record<string, string>;
-  priceSuffix: string;
-  tier: Tier;
-  value: string;
-}) {
-  // Handle case where price is not available
-  const priceId = tier.priceId[value];
-  const price = priceMap[priceId];
-
-  return (
-    <div className="mt-6 flex flex-col px-8">
-      {loading ? (
-        <Skeleton className="h-[96px] w-full bg-gray-200 dark:bg-gray-800" />
-      ) : error ? (
-        <div className="text-[24px] leading-[30px] text-red-500 font-medium">Price unavailable</div>
-      ) : !price ? (
-        <div className="text-[24px] leading-[30px] text-amber-500 font-medium">Price unavailable</div>
-      ) : (
-        <>
-          <div
-            className={cn('text-[80px] leading-[96px] tracking-[-1.6px] font-medium', 'text-gray-900 dark:text-white')}
-          >
-            {price.replace(/\.00$/, '')}
-          </div>
-          <div className={cn('font-medium leading-[12px] text-[12px]', 'text-gray-600 dark:text-gray-400')}>
-            {priceSuffix}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// Price Title Component
-function PriceTitle({ tier }: { tier: Tier }) {
-  return (
-    <div className="flex justify-between items-center px-8 pt-8">
-      <div className="flex items-center gap-[10px]">
-        <Image src={tier.icon} height={40} width={40} alt={tier.name} />
-        <p className="text-[20px] leading-[30px] font-semibold text-gray-900 dark:text-white">{tier.name}</p>
-      </div>
-      {tier.featured && (
-        <div
-          className={cn(
-            'flex items-center px-3 py-1 rounded-xs border',
-            'border-secondary-foreground/10 text-[14px] h-[29px] leading-[21px]',
-            'bg-primary text-primary-foreground',
-          )}
-        >
-          Most popular
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Price Cards Component
-function PriceCards({
-  loading,
-  error,
-  frequency,
-  priceMap,
-}: {
-  loading: boolean;
-  error?: string;
-  frequency: IBillingFrequency;
-  priceMap: Record<string, string>;
-}) {
-  return (
-    <div id="pricing" className="isolate mx-auto grid grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-      {PricingTier.map((tier) => (
-        <div
-          key={tier.id}
-          className={cn(
-            'rounded-lg bg-white/70 dark:bg-gray-900/70',
-            'backdrop-blur-[6px] overflow-hidden',
-            'border border-gray-200 dark:border-gray-800',
-          )}
-        >
-          <div className="flex gap-5 flex-col rounded-lg rounded-b-none">
-            <PriceTitle tier={tier} />
-            <PriceAmount
-              loading={loading}
-              error={error}
-              tier={tier}
-              priceMap={priceMap}
-              value={frequency.value}
-              priceSuffix={frequency.priceSuffix}
-            />
-            <div className="px-8">
-              <Separator className="bg-gray-200 dark:bg-gray-800" />
-            </div>
-            <div className="px-8 text-[16px] leading-[24px] text-gray-600 dark:text-gray-400">{tier.description}</div>
-          </div>
-          <div className="px-8 mt-8">
-            <Button 
-              className="w-full" 
-              variant={tier.featured ? 'default' : 'secondary'} 
-              asChild
-              disabled={loading || !!error || !priceMap[tier.priceId[frequency.value]]}
-            >
-              <Link href={`/checkout/${tier.priceId[frequency.value]}`}>Get started</Link>
-            </Button>
-          </div>
-          <FeaturesList tier={tier} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Main Pricing Component
-export function Pricing({ country }: { country: string }) {
-  const [frequency, setFrequency] = useState<IBillingFrequency>(BillingFrequency[0]);
-  const [paddle, setPaddle] = useState<Paddle | undefined>(undefined);
-  const [configError, setConfigError] = useState<string | undefined>(undefined);
-  const [paddleInitialized, setPaddleInitialized] = useState<boolean>(false);
-
-  // Use our updated hook that includes error handling
-  const { prices, loading, error: priceError } = usePaddlePrices(paddle, country);
+function getLineItems(): PricePreviewParams['items'] {
+  const priceIds = PricingTier.map((tier) => [tier.priceId.month, tier.priceId.year]);
   
-  // Combine both error types for display
-  const error = configError || priceError;
+  // Debug logging to see what priceIds we're using
+  console.log('Price IDs being requested:', priceIds.flat());
+  
+  return priceIds.flat().map((priceId) => ({ priceId, quantity: 1 }));
+}
+
+function getPriceAmounts(prices: PricePreviewResponse) {
+  // Log the raw response to inspect its structure
+  console.log('Raw Paddle price response:', JSON.stringify(prices, null, 2));
+  
+  try {
+    // Check if the expected structure exists
+    if (!prices?.data?.details?.lineItems) {
+      console.error('Unexpected Paddle response structure:', prices);
+      throw new Error('Invalid price response structure');
+    }
+    
+    // Log the line items for debugging
+    console.log('Line items count:', prices.data.details.lineItems.length);
+    
+    return prices.data.details.lineItems.reduce((acc, item) => {
+      // Make sure the expected properties exist
+      if (item?.price?.id && item?.formattedTotals?.total) {
+        acc[item.price.id] = item.formattedTotals.total;
+      } else {
+        console.warn('Line item missing expected properties:', item);
+      }
+      return acc;
+    }, {} as PaddlePrices);
+  } catch (err) {
+    console.error('Error in getPriceAmounts:', err);
+    throw err;
+  }
+}
+
+export function usePaddlePrices(
+  paddle: Paddle | undefined,
+  country: string,
+): { prices: PaddlePrices; loading: boolean; error?: string } {
+  const [prices, setPrices] = useState<PaddlePrices>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    // Check if paddle is already initialized to prevent duplicate initialization
-    if (paddleInitialized) return;
-
-    const clientToken = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN;
-    const paddleEnv = process.env.NEXT_PUBLIC_PADDLE_ENV;
+    // Reset state when dependencies change
+    setLoading(true);
+    setError(undefined);
     
-    // Debug logging
-    console.log('Environment variables check:', { 
-      hasToken: !!clientToken, 
-      hasEnv: !!paddleEnv 
-    });
-    
-    // Check for missing configuration
-    if (!clientToken) {
-      console.error('Missing NEXT_PUBLIC_PADDLE_CLIENT_TOKEN environment variable');
-      setConfigError('Missing Paddle client token configuration');
-      return;
-    }
-    
-    if (!paddleEnv) {
-      console.error('Missing NEXT_PUBLIC_PADDLE_ENV environment variable');
-      setConfigError('Missing Paddle environment configuration');
+    if (!paddle) {
+      console.log('Paddle instance not available yet, waiting...');
       return;
     }
 
-    // Initialize Paddle
-    console.log('Initializing Paddle with environment:', paddleEnv);
-    initializePaddle({
-      token: clientToken,
-      environment: paddleEnv as Environments,
-    })
-      .then((paddleInstance) => {
-        if (paddleInstance) {
-          console.log('Paddle initialized successfully');
-          setPaddle(paddleInstance);
-          setPaddleInitialized(true);
-          setConfigError(undefined);
-        } else {
-          console.error('Paddle initialization returned undefined');
-          setConfigError('Failed to initialize Paddle');
+    // Validate country code if present
+    const countryCode = country && country !== 'OTHERS' ? country : undefined;
+    console.log('Using country code for pricing:', countryCode || 'None (using default)');
+
+    // Build request with detailed logging
+    const paddlePricePreviewRequest: Partial<PricePreviewParams> = {
+      items: getLineItems(),
+      ...(countryCode && { address: { countryCode } }),
+    };
+    
+    console.log('Sending Paddle price preview request:', paddlePricePreviewRequest);
+
+    // Fetch prices with more detailed error handling
+    paddle.PricePreview(paddlePricePreviewRequest as PricePreviewParams)
+      .then((priceResponse) => {
+        try {
+          console.log('Paddle price preview request successful');
+          const formattedPrices = getPriceAmounts(priceResponse);
+          console.log('Formatted prices:', formattedPrices);
+          
+          if (Object.keys(formattedPrices).length === 0) {
+            console.warn('No prices were returned from Paddle');
+            setError('No pricing data available');
+          } else {
+            setPrices(formattedPrices);
+          }
+        } catch (err: any) {
+          console.error('Error processing price data:', err);
+          setError(`Failed to process price data: ${err.message || 'Unknown error'}`);
+        } finally {
+          setLoading(false);
         }
       })
-      .catch((err) => {
-        console.error('Error initializing Paddle:', err);
-        setConfigError('Failed to initialize Paddle payment system');
+      .catch((err: any) => {
+        // Enhanced error logging with request details
+        console.error('Error fetching prices from Paddle:', {
+          error: err,
+          message: err.message,
+          request: paddlePricePreviewRequest,
+        });
+        
+        // More descriptive error message
+        setError(`Failed to fetch prices: ${err.message || 'Unknown API error'}`);
+        setLoading(false);
       });
-  }, [paddleInitialized]);
+  }, [country, paddle]);
 
-  // Debug output
-  useEffect(() => {
-    console.log('Pricing state:', {
-      paddleInitialized,
-      hasPaddleInstance: !!paddle,
-      loading,
-      pricesAvailable: Object.keys(prices).length > 0,
-      error
-    });
-  }, [paddle, paddleInitialized, loading, prices, error]);
-
-  return (
-    <div className="mx-auto max-w-7xl relative px-[32px] flex flex-col items-center justify-between">
-      {error && (
-        <Alert variant="destructive" className="mb-6 w-full">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            {error}. Please check your Paddle configuration.
-          </AlertDescription>
-        </Alert>
-      )}
-      
-      <Toggle frequency={frequency} setFrequency={setFrequency} />
-      <PriceCards frequency={frequency} loading={loading} error={error} priceMap={prices} />
-    </div>
-  );
+  return { prices, loading, error };
 }
