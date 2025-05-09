@@ -40,6 +40,6 @@ export const PricingTier: Tier[] = [
       'Everything in Pro',
     ],
     featured: false,
-    priceId: { month: 'pri_01hsxyff091kyc9rjzx7zm6yqh', year: 'pri_01hsxyfysbzf90tkh2wqbfxwa5' },
+    priceId: { month: 'pri_01jqns42gg5tdqpaz3wh1ajfes', year: 'pri_01jqns42gg5tdqpaz3wh1ajfes' },
   },
 ];
