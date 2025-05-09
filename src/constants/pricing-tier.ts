@@ -16,7 +16,7 @@ export const PricingTier: Tier[] = [
     description: 'Ideal for individuals who want to get started with simple design tasks.',
     features: ['1 workspace', 'Limited collaboration', 'Export to PNG and SVG'],
     featured: false,
-    priceId: { month: 'pri_01hsxyh9txq4rzbrhbyngkhy46', year: 'pri_01hsxyh9txq4rzbrhbyngkhy46' },
+    priceId: { month: 'pri_01jqns42gg5tdqpaz3wh1ajfes', year: 'pri_01jqns42gg5tdqpaz3wh1ajfes' },
   },
   {
     name: 'Pro',
@@ -25,7 +25,7 @@ export const PricingTier: Tier[] = [
     description: 'Enhanced design tools for scaling teams who need more flexibility.',
     features: ['Integrations', 'Unlimited workspaces', 'Advanced editing tools', 'Everything in Starter'],
     featured: true,
-    priceId: { month: 'pri_01hsxycme6m95sejkz7sbz5e9g', year: 'pri_01hsxyeb2bmrg618bzwcwvdd6q' },
+    priceId: { month: 'pri_01jqns42gg5tdqpaz3wh1ajfes', year: 'pri_01jqns42gg5tdqpaz3wh1ajfes' },
   },
   {
     name: 'Advanced',
