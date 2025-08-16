@@ -1,24 +1,31 @@
+/* Base background styles */
 .checkout-background-base {
   width: 100%;
   position: absolute;
   z-index: -1;
 }
 
+/* Grain background with updated colors */
 .grain-background {
   background: url('/assets/background/grain-bg.svg') repeat;
+  opacity: 0.05;
 }
 
+/* Grid background */
 .grid-bg {
   background: url('/assets/background/grid-bg.svg') no-repeat;
 }
 
+/* Gradient backgrounds updated to match hero section */
 .top-left-gradient-background {
-  background: url('/assets/background/checkout-top-gradient.svg') no-repeat top left;
-}
-.bottom-right-gradient-background {
-  background: url('/assets/background/checkout-bottom-gradient.svg') no-repeat bottom right;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(79, 70, 229, 0) 70%) no-repeat top left;
 }
 
+.bottom-right-gradient-background {
+  background: linear-gradient(315deg, rgba(59, 130, 246, 0.2) 0%, rgba(79, 70, 229, 0) 70%) no-repeat bottom right;
+}
+
+/* Updated highlight to use violet instead of yellow */
 .checkout-yellow-highlight {
   position: absolute;
   left: 96px;
@@ -28,18 +35,19 @@
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 15%,
-    rgba(255, 248, 0, 0.6) 50%,
+    rgba(139, 92, 246, 0.6) 50%,
     rgba(255, 255, 255, 0) 85%
   );
 }
 
+/* Updated blur effects to use blue/violet */
 .checkout-hard-blur {
   width: 196px;
   height: 4px;
   position: absolute;
   left: 103px;
   top: -2px;
-  background: #fff800;
+  background: #6366f1;
   opacity: 0.1;
   filter: blur(12px);
 }
@@ -52,18 +60,19 @@
   top: -9px;
   border-radius: 296px;
   opacity: 0.3;
-  background: #fff800;
+  background: #6366f1;
   filter: blur(32px);
 }
 
+/* Mobile grainy blur updated */
 .checkout-mobile-grainy-blur {
   width: 211px;
   height: 245px;
   background: linear-gradient(
     0deg,
-    rgba(255, 251, 229, 0) 0%,
-    rgba(21, 227, 227, 0.06) 35.5%,
-    rgba(255, 248, 0, 0.48) 80.5%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(59, 130, 246, 0.06) 35.5%,
+    rgba(139, 92, 246, 0.2) 80.5%
   );
   filter: blur(26px);
 }
@@ -73,10 +82,11 @@
   position: absolute;
   width: 101px;
   height: 167px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(168, 240, 248, 0.6) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(59, 130, 246, 0.3) 100%);
   filter: blur(26px);
 }
 
+/* Mobile gradients updated */
 .checkout-mobile-top-gradient {
   position: absolute;
   left: 50%;
@@ -84,6 +94,7 @@
   top: -140px;
   width: 211px;
   height: 280px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(79, 70, 229, 0) 70%);
 }
 
 .checkout-mobile-bottom-gradient {
@@ -92,12 +103,10 @@
   position: absolute;
   right: -140.023px;
   bottom: -109.977px;
+  background: linear-gradient(315deg, rgba(59, 130, 246, 0.2) 0%, rgba(79, 70, 229, 0) 70%);
 }
 
-.checkout-mobile-bottom-gradient.checkout-mobile-grainy-blur {
-  transform: rotate(180deg);
-}
-
+/* Order summary highlight updated */
 .checkout-order-summary-mobile-yellow-highlight::before {
   content: '';
   position: absolute;
@@ -109,11 +118,12 @@
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 15%,
-    rgba(255, 248, 0, 0.6) 50%,
+    rgba(139, 92, 246, 0.6) 50%,
     rgba(255, 255, 255, 0) 85%
   );
 }
 
+/* Success background updated */
 .checkout-success-background {
   position: absolute;
   left: 50%;
@@ -125,9 +135,9 @@
   transform: rotate(180deg);
   background: linear-gradient(
     180deg,
-    rgba(255, 251, 229, 0) 0%,
-    rgba(21, 227, 227, 0.06) 35.5%,
-    rgba(255, 248, 0, 0.18) 80.5%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(59, 130, 246, 0.06) 35.5%,
+    rgba(139, 92, 246, 0.1) 80.5%
   );
   filter: blur(100px);
 }
@@ -140,13 +150,14 @@
   height: 559px;
   left: 50%;
   margin-left: -197px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(168, 240, 248, 0.6) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(59, 130, 246, 0.3) 100%);
   filter: blur(100px);
 }
 
+/* Footer border updated */
 .footer-border {
   position: relative;
-  background: linear-gradient(90deg, rgba(65, 75, 78, 0) 0%, #414b4e 49.5%, rgba(65, 75, 78, 0) 100%);
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0) 0%, rgba(30, 41, 59, 0.5) 49.5%, rgba(30, 41, 59, 0) 100%);
 }
 .footer-border::after {
   content: '';
@@ -158,7 +169,26 @@
   background: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0) 15%,
-    rgba(255, 248, 0, 0.6) 50%,
+    rgba(139, 92, 246, 0.6) 50%,
     rgba(255, 255, 255, 0) 85%
   );
+}
+
+/* Dark mode specific styles */
+@media (prefers-color-scheme: dark) {
+  .grain-background {
+    opacity: 0.1;
+  }
+
+  .top-left-gradient-background {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(79, 70, 229, 0) 70%) no-repeat top left;
+  }
+
+  .bottom-right-gradient-background {
+    background: linear-gradient(315deg, rgba(59, 130, 246, 0.3) 0%, rgba(79, 70, 229, 0) 70%) no-repeat bottom right;
+  }
+
+  .footer-border {
+    background: linear-gradient(90deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.8) 49.5%, rgba(15, 23, 42, 0) 100%);
+  }
 }

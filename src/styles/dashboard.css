@@ -1,4 +1,4 @@
-.dashboard-background-base {
+/* .dashboard-background-base {
   width: 100%;
   position: absolute;
   z-index: -1;
@@ -109,4 +109,157 @@
     rgba(255, 248, 0, 0.6) 50%,
     rgba(255, 255, 255, 0) 85%
   );
+} */
+
+/* Base background styles */
+.dashboard-background-base {
+  width: 100%;
+  position: absolute;
+  z-index: -1;
+}
+
+/* Grain background with updated opacity */
+.grain-background {
+  background: url('/assets/background/grain-bg.svg') repeat;
+  opacity: 0.05;
+}
+
+/* Top grainy blur - updated to blue/violet gradient */
+.dashboard-shared-top-grainy-blur {
+  position: absolute;
+  left: -131.023px;
+  top: -127.993px;
+  width: 211px;
+  height: 245px;
+  z-index: -1;
+  background: linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(59, 130, 246, 0.06) 35.5%,
+    rgba(139, 92, 246, 0.2) 80.5%
+  );
+  filter: blur(26px);
+}
+.dashboard-shared-top-grainy-blur::before {
+  content: '';
+  left: 55px;
+  position: absolute;
+  width: 101px;
+  height: 167px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(59, 130, 246, 0.3) 100%);
+  filter: blur(26px);
+}
+
+/* Bottom grainy blur - updated to blue/violet gradient */
+.dashboard-shared-bottom-grainy-blur {
+  position: absolute;
+  transform: rotate(-90deg);
+  right: -440.007px;
+  bottom: -560px;
+  width: 820px;
+  height: 951px;
+  flex-shrink: 0;
+  border-radius: 951px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(59, 130, 246, 0.06) 35.5%,
+    rgba(139, 92, 246, 0.18) 80.5%
+  );
+  filter: blur(100px);
+}
+
+.dashboard-shared-bottom-grainy-blur::before {
+  content: '';
+  position: absolute;
+  width: 394px;
+  height: 648px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(59, 130, 246, 0.3) 100%);
+  filter: blur(100px);
+}
+
+/* Sidebar items - updated colors */
+.dashboard-sidebar-items {
+  svg.lucide {
+    color: #64748b; /* slate-500 */
+  }
+  &.dashboard-sidebar-items-active {
+    background: rgba(15, 23, 42, 0.3); /* slate-900 with opacity */
+    svg.lucide {
+      color: #6366f1; /* violet-500 */
+    }
+  }
+}
+
+.dashboard-sidebar-items:hover {
+  background: rgba(15, 23, 42, 0.2); /* slate-900 with opacity */
+  svg.lucide {
+    color: #6366f1; /* violet-500 */
+  }
+}
+
+/* Sidebar highlight - updated to violet */
+.dashboard-sidebar-highlight:after {
+  content: '';
+  width: 248px;
+  height: 1px;
+  position: absolute;
+  left: 50%;
+  margin-left: -124px;
+  top: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 15%,
+    rgba(139, 92, 246, 0.6) 50%,
+    /* violet-500 */ rgba(255, 255, 255, 0) 85%
+  );
+}
+
+/* Header highlight - updated to violet */
+.dashboard-header-highlight::after {
+  content: '';
+  width: 248px;
+  height: 1px;
+  position: absolute;
+  left: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 15%,
+    rgba(139, 92, 246, 0.6) 50%,
+    /* violet-500 */ rgba(255, 255, 255, 0) 85%
+  );
+}
+
+/* Dark mode specific styles */
+@media (prefers-color-scheme: dark) {
+  .grain-background {
+    opacity: 0.1;
+  }
+
+  .dashboard-shared-top-grainy-blur {
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(59, 130, 246, 0.1) 35.5%,
+      rgba(139, 92, 246, 0.3) 80.5%
+    );
+  }
+
+  .dashboard-sidebar-items {
+    svg.lucide {
+      color: #94a3b8; /* slate-400 */
+    }
+    &.dashboard-sidebar-items-active {
+      background: rgba(30, 41, 59, 0.4); /* slate-800 with opacity */
+      svg.lucide {
+        color: #818cf8; /* violet-400 */
+      }
+    }
+  }
+
+  .dashboard-sidebar-items:hover {
+    background: rgba(30, 41, 59, 0.3); /* slate-800 with opacity */
+  }
 }
